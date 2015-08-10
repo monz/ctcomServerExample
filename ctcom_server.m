@@ -8,9 +8,11 @@ import ctcom.CtcomServer;
 
 %% configuration
 
-ctmatFiles = 'matfiles/chh 000791_kt3.i01.ctmat';
-outCtmatPath = '/mnt/linuxdata/tmp/ctmatfiles/testrunData.ctmat';
-outCtmatLocation = '\\192.168.2.101\ctmatfiles\testrunData.ctmat'; % client must have access rights to this path
+ctmatFile = 'matfiles/chh 000791_kt3.i01.ctmat';
+outCtmatPath = 'Z:\testrunData.ctmat';
+%outCtmatPath = '/mnt/linuxdata/tmp/ctmatfiles/testrunData.ctmat';
+outCtmatLocation = '/mnt/linuxdata/tmp/ctmatfiles/testrunData.ctmat';
+%outCtmatLocation = '\\192.168.2.101\ctmatfiles\testrunData.ctmat'; % client must have access rights to this path
 %outCtmatLocation = '\\192.168.56.101\ctmatfiles\testrunData.ctmat';
 serverport = 4745;
 
@@ -58,30 +60,29 @@ try
             server.sendMessage(message);
             
             % start new testing/examination process
-            while true
-                % TODO: implement algorithm here
-                % read client's readData answer
-                % ---------------------------------------------------
-                % < input code here>
-                % ---------------------------------------------------
+            % TODO: implement algorithm here
+            % read client's readData answer
+            % ---------------------------------------------------
+            % < input code here>
+            % ---------------------------------------------------
 
-                % receive CTCOM readData or quit messages
-                message = server.getMessage();
-                % check if received message is valid
-                if isempty(message)
-                    % received unknown message
-                    continue;
-                end
-                if message.getType() == MessageType.READ_DATA
-                    % handle CTCOM readData request
-                    fprintf('Transfer: %s\n', char(message.getTransfer()));
-                    fprintf('Location: %s\n', char(message.getLocation()));
-                elseif message.getType() == MessageType.QUIT
-                    % quit CTCOM connection
-                    fprintf('Quit: %s\n', char(message.getMessage()));
-                    break;
-                end
+            % receive CTCOM readData or quit messages
+            message = server.getMessage();
+            % check if received message is valid
+            if isempty(message)
+                % received unknown message
+                %continue;
             end
+            if message.getType() == MessageType.READ_DATA
+                % handle CTCOM readData request
+                fprintf('Transfer: %s\n', char(message.getTransfer()));
+                fprintf('Location: %s\n', char(message.getLocation()));
+            elseif message.getType() == MessageType.QUIT
+                % quit CTCOM connection
+                fprintf('Quit: %s\n', char(message.getMessage()));
+                %break;
+            end
+            server.quit('enough messages sent');
         else
             % protocol version did not match
             disp('Protocol version did not match');
