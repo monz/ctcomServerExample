@@ -6,14 +6,19 @@ import ctcom.messageTypes.*;
 import ctcom.messageImpl.*;
 import ctcom.CtcomServer;
 
-outCtmatPath = '/mnt/test/testrunData.ctmat';
-outCtmatLocation = '\\192.168.56.101\ctmatfiles\testrunData.ctmat';
+%% configuration
+
+ctmatFiles = 'matfiles/chh 000791_kt3.i01.ctmat';
+outCtmatPath = '/mnt/linuxdata/tmp/ctmatfiles/testrunData.ctmat';
+outCtmatLocation = '\\192.168.2.101\ctmatfiles\testrunData.ctmat'; % client must have access rights to this path
+%outCtmatLocation = '\\192.168.56.101\ctmatfiles\testrunData.ctmat';
+serverport = 4745;
 
 %%
 
 disp('Starting CTCOM server service');
 % create new ctcom server
-server = CtcomServer(4745);
+server = CtcomServer(serverport);
 %while true
 try
     % accept connection requests
@@ -37,15 +42,13 @@ try
             % read config from connection request
             % TODO: implement algorithm here
             % ---------------------------------------------------
-            load('matfiles/chh 000791_kt3.i01.ctmat', '-mat');
+            load(ctmatFile, '-mat');
             % handle test bench read
             handleTestbenchRead(request, ctData);
             
             % handle test bench write
             outCtmat = handleTestbenchWrite(request, ctData, outCtmatPath);
 
-            % save ctmat file into network share
-            save(outCtmatPath, 'outCtmat');
             % ---------------------------------------------------
 
             % notify client to read data provided on network share
@@ -91,7 +94,7 @@ catch ME
     try
         server.quit('shit happens');
         server.close();
-    catch
+    catch ME
         disp(ME.message);
     end
     disp(ME.message);
