@@ -9,13 +9,22 @@ function handleReadDataMessage( message, dataToRead )
     ctmatFile = load(ctmatLocation, '-mat');
     
     % print data
+    
     separator = '-----------------------------';
+    disp('signals');
     disp(separator);
-    numberOfFields = length(dataToRead);
-    for n = 1:numberOfFields
-        structField = dataToRead{n};
-        printData(ctmatFile.tmpMatFile.(structField));
-        disp(separator);
-    end
+    disp(ctmatFile.ctData.parts(1).signals(1).('yData')(1:3));
+%     separator = '-----------------------------';
+%     disp(separator);
+%     numberOfFields = length(dataToRead);
+%     for n = 1:numberOfFields
+%         structField = dataToRead{n};
+%         % skip parts field for convenience
+%         if isequal(structField, 'parts.engineInputs') || isequal(structField, 'parts.engineOutputs')
+%             continue;
+%         end
+%         printData(ctmatFile.ctData.(structField));
+%         disp(separator);
+%     end
 end
 

@@ -5,16 +5,20 @@ function [ createdCtmatLocation, newCounter ] = createCtmatFile( ctmatDirectory,
     numberOfFields = length(dataToWrite);
     for n = 1:numberOfFields
        structField = dataToWrite{n};
-       tmpMatFile.(structField) = data.(structField);
+       if isequal(structField, 'parts.engineInputs') || isequal(structField, 'parts.engineOutputs')
+           ctData.('parts') = data.('parts');
+       else
+           ctData.(structField) = data.(structField);
+       end
     end
     
     % create new filename
-    newCounter = counter + 1;
+    newCounter = counter + 2;
     filename = sprintf('chh %05i_kt3.i01', newCounter);
     createdCtmatLocation = [ctmatDirectory, filename, '.ctmat'];
     
     % save ctmat file into network share
-    save(createdCtmatLocation, 'tmpMatFile');
+    save(createdCtmatLocation, 'ctData');
 
 end
 
