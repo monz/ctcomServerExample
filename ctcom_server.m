@@ -15,8 +15,8 @@ ctmatDirectory = '/mnt/linuxdata/tmp/ctmatfiles/';
 %outCtmatLocation = '\\192.168.2.101\ctmatfiles\testrunData.ctmat'; % client must have access rights to this path
 %outCtmatLocation = '\\192.168.56.101\ctmatfiles\testrunData.ctmat';
 serverport = 4745;
-waitTime = 5;
-ctmatCounter = 0;
+waitTime = 10;
+ctmatCounter = -1;
 % enable pausing
 pause on;
 
@@ -67,7 +67,7 @@ while true
             
             % notify client to read data provided on network share
             % send CTCOM readData message to client
-            fprintf('Sending new data %05i \n',ctmatCounter);
+            fprintf('\n\n Sending new data %05i \n',ctmatCounter);
             message = ReadDataMessage();
             message.setLocation(createdCtmatLocation);
             server.sendMessage(message);
@@ -88,6 +88,9 @@ while true
                 
                 % read client's readData answer
                 handleReadDataMessage(message, dataToRead);
+            
+                % wait some time before sending new data to ctcom client
+                pause(waitTime);
                 continue;
                 
             elseif message.getType() == MessageType.QUIT
@@ -97,9 +100,6 @@ while true
                 break;
                 
             end
-            
-            % wait some time before sending new data to ctcom client
-            pause(waitTime);
         end
 %         server.quit('enough messages sent');
     catch ME
