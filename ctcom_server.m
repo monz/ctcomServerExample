@@ -8,13 +8,17 @@ import ctcom.CtcomServer;
 
 %% configuration
 
-ctmatFile = 'matfiles/chh 000791_kt3.i01.ctmat';
+exampleData = 'matfiles/chh 000791_kt3.i01.ctmat';
 % outCtmatPath = 'Z:\testrunData.ctmat';
 outCtmatPath = '/mnt/linuxdata/tmp/ctmatfiles/testrunData.ctmat';
-outCtmatLocation = '/mnt/linuxdata/tmp/ctmatfiles/testrunData.ctmat';
+ctmatDirectory = '/mnt/linuxdata/tmp/ctmatfiles/';
 %outCtmatLocation = '\\192.168.2.101\ctmatfiles\testrunData.ctmat'; % client must have access rights to this path
 %outCtmatLocation = '\\192.168.56.101\ctmatfiles\testrunData.ctmat';
 serverport = 4745;
+waitTime = 5;
+ctmatCounter = 0;
+% enable pausing
+pause on;
 
 %%
 
@@ -50,50 +54,54 @@ while true
 
         protocolVersion = request.getProtocolVersion();
         fprintf('Handle ctcom messages in version: %s\n', char(protocolVersion));
-
+        %% start main algorithm
+        
         % read config from connection request
-        % TODO: implement algorithm here
-        % ---------------------------------------------------
-        load(ctmatFile, '-mat');
-        % handle test bench read
-        handleTestbenchRead(request, ctData);
-
-        % handle test bench write
-        outCtmat = handleTestbenchWrite(request, ctData, outCtmatPath);
-
-        % ---------------------------------------------------
-
-        % notify client to read data provided on network share
-        % send CTCOM readData message to client
-        message = ReadDataMessage();
-        message.setLocation(outCtmatLocation);
-        server.sendMessage(message);
-
-        % receive CTCOM readData or quit messages
+        [dataToRead, dataToWrite] = handleConnectMessage(request); 
+        
         while true
-            message = server.getMessage();
-            % check if received message is valid
-            if isempty(message)
-                % received unknown message
-                continue;
-            else
-                break;
+            % create ctmat file for the client
+            % TODO: instead of load data, here the test bench creates new data
+            data = load(exampleData,'-mat');
+            [createdCtmatLocation, ctmatCounter] = createCtmatFile(ctmatDirectory, dataToWrite, data.ctData, ctmatCounter);
+            
+            % notify client to read data provided on network share
+            % send CTCOM readData message to client
+            fprintf('Sending new data %05i \n',ctmatCounter);
+            message = ReadDataMessage();
+            message.setLocation(createdCtmatLocation);
+            server.sendMessage(message);
+
+            % receive CTCOM readData or quit messages
+            while true
+                message = server.getMessage();
+                % check if received message is valid
+                if isempty(message)
+                    % received unknown message
+                    continue;
+                else
+                    break;
+                end
             end
+            
+            if message.getType() == MessageType.READ_DATA
+                
+                % read client's readData answer
+                handleReadDataMessage(message, dataToRead);
+                continue;
+                
+            elseif message.getType() == MessageType.QUIT
+                
+                % print CTCOM quit message
+                fprintf('Quit: %s\n', char(message.getMessage()));
+                break;
+                
+            end
+            
+            % wait some time before sending new data to ctcom client
+            pause(waitTime);
         end
-        if message.getType() == MessageType.READ_DATA
-            % TODO: implement algorithm here
-            % read client's readData answer
-            % ---------------------------------------------------
-            % handle CTCOM readData request
-            fprintf('Transfer: %s\n', char(message.getTransfer()));
-            fprintf('Location: %s\n', char(message.getLocation()));
-        elseif message.getType() == MessageType.QUIT
-            % print CTCOM quit message
-            fprintf('Quit: %s\n', char(message.getMessage()));
-            break;
-        end
-        % ---------------------------------------------------
-        server.quit('enough messages sent');
+%         server.quit('enough messages sent');
     catch ME
         try
             server.quit('shit happens');
