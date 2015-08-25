@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.thi.de/CTCOM/2014.01/server" xmlns="http://www.thi.de/CTCOM/2014.01/server" elementFormDefault="qualified">
+
+  <xs:element name="serverConfig">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ctcom" type="ctcomSettings"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+<!-- separator !-->
+
+  <xs:complexType name="ctcomSettings">
+    <xs:sequence>
+      <xs:element name="port">
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="65535"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="ctmatExampleData" type="xs:string"/>
+      <xs:element name="ctmatNetworkPath" type="xs:string"/>
+      <xs:element name="timeBetweenMessages">
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="300"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

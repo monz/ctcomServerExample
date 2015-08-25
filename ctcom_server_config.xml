@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<serverConfig xmlns="http://www.thi.de/CTCOM/2014.01/server" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thi.de/CTCOM/2014.01/server ctcom_server_config.xsd">
+
+	<ctcom>
+		<port>4745</port>
+		<ctmatExampleData>matfiles/chh 000791_kt3.i01.ctmat</ctmatExampleData>
+		<ctmatNetworkPath>/mnt/linuxdata/tmp/ctmatfiles/</ctmatNetworkPath>
+		<timeBetweenMessages>10</timeBetweenMessages>
+	</ctcom>
+
+</serverConfig>
