@@ -1,22 +1,22 @@
-clear all;
+clear;
 clc;
-
 
 import ctcom.messageTypes.*;
 import ctcom.messageImpl.*;
 import ctcom.CtcomServer;
 
 %% configuration
+% TODO: validate xml config file with xsd schema
+config = ConfigReader.read('ctcom_server_config.xml', 'ctcom');
 
-exampleData = 'matfiles/chh 000791_kt3.i01.ctmat';
-% outCtmatPath = 'Z:\testrunData.ctmat';
-outCtmatPath = '/mnt/linuxdata/tmp/ctmatfiles/testrunData.ctmat';
-ctmatDirectory = '/mnt/linuxdata/tmp/ctmatfiles/';
-%outCtmatLocation = '\\192.168.2.101\ctmatfiles\testrunData.ctmat'; % client must have access rights to this path
-%outCtmatLocation = '\\192.168.56.101\ctmatfiles\testrunData.ctmat';
-serverport = 4745;
-waitTime = 10;
+serverport = str2double(config.port);
+exampleData = config.ctmatExampleData;
+ctmatDirectory = config.ctmatNetworkPath;
+waitTime = str2double(config.timeBetweenMessages);
+
+% static values
 ctmatCounter = -1;
+
 % enable pausing
 pause on;
 
@@ -101,7 +101,6 @@ while true
                 
             end
         end
-%         server.quit('enough messages sent');
     catch ME
         try
             server.quit('shit happens');
