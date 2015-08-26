@@ -5,7 +5,7 @@
 	<ctcom>
 		<port>4745</port>
 		<ctmatExampleData>matfiles/chh 000791_kt3.i01.ctmat</ctmatExampleData>
-		<ctmatNetworkPath>/mnt/linuxdata/tmp/ctmatfiles/</ctmatNetworkPath>
+		<ctmatNetworkPath>/mnt/linuxdata/tmp/ctmatfiles</ctmatNetworkPath>
 		<timeBetweenMessages>10</timeBetweenMessages>
 	</ctcom>
 

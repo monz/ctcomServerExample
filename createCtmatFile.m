@@ -15,7 +15,7 @@ function [ createdCtmatLocation, newCounter ] = createCtmatFile( ctmatDirectory,
     % create new filename
     newCounter = counter + 2;
     filename = sprintf('chh %05i_kt3.i01', newCounter);
-    createdCtmatLocation = [ctmatDirectory, filename, '.ctmat'];
+    createdCtmatLocation = [fullfile(ctmatDirectory, filename), '.ctmat'];
     
     % save ctmat file into network share
     save(createdCtmatLocation, 'ctData');

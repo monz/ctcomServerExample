@@ -9,7 +9,7 @@ function ctcom_server(configfile)
 
     serverport = str2double(config.port);
     exampleData = config.ctmatExampleData;
-    ctmatDirectory = config.ctmatNetworkPath;
+    ctmatDirectory = fullfile(config.ctmatNetworkPath);
     waitTime = str2double(config.timeBetweenMessages);
 
     % static values
