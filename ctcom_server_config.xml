@@ -7,6 +7,7 @@
 		<ctmatExampleData>matfiles/chh 000791_kt3.i01.ctmat</ctmatExampleData>
 		<ctmatNetworkPath>/mnt/linuxdata/tmp/ctmatfiles</ctmatNetworkPath>
 		<timeBetweenMessages>10</timeBetweenMessages>
+		<readMsgTimeout>30</readMsgTimeout>
 	</ctcom>
 
 </serverConfig>

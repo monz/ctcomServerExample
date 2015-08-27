@@ -11,6 +11,7 @@ function ctcom_server(configfile)
     exampleData = config.ctmatExampleData;
     ctmatDirectory = fullfile(config.ctmatNetworkPath);
     waitTime = str2double(config.timeBetweenMessages);
+    readMsgTimeout = str2double(config.readMsgTimeout);
 
     % static values
     ctmatCounter = -1;
@@ -28,7 +29,7 @@ function ctcom_server(configfile)
             %% accept connection requests
             server.accept();
             % read client connection request
-            request = server.getMessage();
+            request = server.getMessage(readMsgTimeout);
             %% check if received message is valid (not null [java], not empty [matlab])
             if isempty(request)
                 disp('Did not receive ctcom connect message');
@@ -57,7 +58,8 @@ function ctcom_server(configfile)
             % read config from connection request
             [dataToRead, dataToWrite] = handleConnectMessage(request); 
 
-            while true
+            quit = false;
+            while ~quit
                 % create ctmat file for the client
                 % TODO: instead of load data, here the test bench creates new data
                 data = load(exampleData,'-mat');
@@ -72,31 +74,30 @@ function ctcom_server(configfile)
 
                 % receive CTCOM readData or quit messages
                 while true
-                    message = server.getMessage();
+                    message = server.getMessage(readMsgTimeout);
                     % check if received message is valid
                     if isempty(message)
-                        % received unknown message
+                        % received unknown message, receiving next message
                         continue;
-                    else
-                        break;
                     end
-                end
 
-                if message.getType() == MessageType.READ_DATA
+                    if message.getType() == MessageType.READ_DATA
 
-                    % read client's readData answer
-                    handleReadDataMessage(message, dataToRead);
+                        % read client's readData answer
+                        handleReadDataMessage(message, dataToRead);
 
-                    % wait some time before sending new data to ctcom client
-                    pause(waitTime);
-                    continue;
+                        % wait some time before sending new data to ctcom client
+                        pause(waitTime);
+                        break;
 
-                elseif message.getType() == MessageType.QUIT
+                    elseif message.getType() == MessageType.QUIT
 
-                    % print CTCOM quit message
-                    fprintf('Quit: %s\n', char(message.getMessage()));
-                    break;
+                        % print CTCOM quit message
+                        fprintf('Quit: %s\n', char(message.getMessage(readMsgTimeout)));
+                        quit = true;
+                        break;
 
+                    end
                 end
             end
         catch ME
