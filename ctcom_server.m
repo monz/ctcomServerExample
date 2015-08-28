@@ -93,7 +93,7 @@ function ctcom_server(configfile)
                     elseif message.getType() == MessageType.QUIT
 
                         % print CTCOM quit message
-                        fprintf('Quit: %s\n', char(message.getMessage(readMsgTimeout)));
+                        fprintf('Quit: %s\n', char(message.getMessage()));
                         quit = true;
                         break;
 
