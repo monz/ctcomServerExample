@@ -29,7 +29,12 @@ function ctcom_server(configfile)
             %% accept connection requests
             server.accept();
             % read client connection request
-            request = server.getMessage(readMsgTimeout);
+            try
+                request = server.getMessage(readMsgTimeout);
+            catch
+                disp('getMessage timed out, discard connection request');
+                continue;
+            end
             %% check if received message is valid (not null [java], not empty [matlab])
             if isempty(request)
                 disp('Did not receive ctcom connect message');
@@ -74,7 +79,12 @@ function ctcom_server(configfile)
 
                 % receive CTCOM readData or quit messages
                 while true
-                    message = server.getMessage(readMsgTimeout);
+                    try
+                        message = server.getMessage(readMsgTimeout);
+                    catch
+                        quit = true;
+                        break;
+                    end
                     % check if received message is valid
                     if isempty(message)
                         % received unknown message, receiving next message
